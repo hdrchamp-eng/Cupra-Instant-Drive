@@ -1,0 +1,76 @@
+name: Prepare CUPRA website
+
+on:
+  workflow_dispatch:
+    inputs:
+      rebuild:
+        description: Rebuild from source
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cupra-prepare
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import reviewed project package
+        if: hashFiles('cupra-source.zip') != ''
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('cupra-source.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '6fc97d6e0689a9d81c449c78d32b688d16bb9fe566dc79c77fa59beedcc8b249'
+          root = pathlib.Path.cwd().resolve()
+          with zipfile.ZipFile(archive) as z:
+              for entry in z.infolist():
+                  path = pathlib.PurePosixPath(entry.filename)
+                  assert not path.is_absolute() and '..' not in path.parts
+                  assert path.parts[0] not in ('.git', '.github')
+                  assert ((entry.external_attr >> 16) & 0o170000) != 0o120000
+                  assert (root / entry.filename).resolve().is_relative_to(root)
+              z.extractall(root)
+          PY
+          git rm cupra-source.zip
+      - uses: subosito/flutter-action@v2
+        if: inputs.rebuild
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+      - name: Test and rebuild
+        if: inputs.rebuild
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build web --release --base-href /Cupra-Instant-Drive/
+          cp -R build/web/. docs/
+          touch docs/.nojekyll
+      - name: Verify Pages package
+        run: |
+          test -s lib/main.dart
+          test -s pubspec.lock
+          test -s docs/index.html
+          test -s docs/main.dart.js
+          test -f docs/.nojekyll
+          grep -F '<base href="/Cupra-Instant-Drive/">' docs/index.html
+      - name: Commit prepared project without publishing
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m 'Prepare CUPRA source and GitHub Pages website'
+            git push origin HEAD:main
+          fi
+          echo 'Ready. Enable Settings > Pages > main /docs when you want to publish.' >> "$GITHUB_STEP_SUMMARY"
