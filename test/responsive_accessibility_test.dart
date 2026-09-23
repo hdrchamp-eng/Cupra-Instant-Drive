@@ -1,0 +1,66 @@
+import 'package:cupra_instant_drive/app/app.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  for (final size in <Size>[
+    const Size(390, 844),
+    const Size(820, 1180),
+    const Size(1440, 900),
+  ]) {
+    testWidgets(
+      'Landingpage rendert ohne Fehler bei ${size.width.toInt()} px',
+      (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.pumpWidget(const InstantDriveApp());
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('CUPRA in der Nähe finden'), findsOneWidget);
+      },
+    );
+  }
+
+  testWidgets('Hauptnavigation und Marke besitzen verständliche Semantik', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(const InstantDriveApp());
+    await tester.pumpAndSettle();
+    expect(
+      find.bySemanticsLabel('CUPRA Instant Drive, fiktiver Prototyp'),
+      findsOneWidget,
+    );
+    expect(find.widgetWithText(FilledButton, 'Demo starten'), findsOneWidget);
+    semantics.dispose();
+  });
+
+  testWidgets('Discovery zeigt mobil alle acht Modelle ohne Layoutfehler', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const InstantDriveApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('CUPRA in der Nähe finden'));
+    await tester.pumpAndSettle();
+    expect(find.text('CUPRA in deiner Nähe'), findsOneWidget);
+    expect(find.textContaining('8 Fahrzeuge'), findsOneWidget);
+    await tester.tap(find.text('Karte'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Interaktive Karte'), findsOneWidget);
+    expect(find.byTooltip('Hineinzoomen'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('cupra-map-pin-hub-zrh-hb')),
+      findsOneWidget,
+    );
+  });
+}
