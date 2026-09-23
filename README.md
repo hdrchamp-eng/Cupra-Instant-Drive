@@ -17,7 +17,7 @@ Ein lokal ausführbarer, fiktiver Flutter-Prototyp für autonome Probefahrten in
 
 ## GitHub Pages
 
-Die fertige Website liegt in `docs/`. Pages ist noch nicht aktiviert. Anleitung: [PUBLISHING.md](PUBLISHING.md).
+Die fertige Website liegt in `docs/` und wird über GitHub Pages veröffentlicht. Anleitung: [PUBLISHING.md](PUBLISHING.md). Hinweise zum Scroll-Update: [PERFORMANCE.md](PERFORMANCE.md).
 
 Vorgesehene URL: https://hdrchamp-eng.github.io/Cupra-Instant-Drive/
 
