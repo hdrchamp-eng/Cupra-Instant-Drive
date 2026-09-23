@@ -29,7 +29,7 @@ jobs:
           python3 - <<'PY'
           import hashlib, pathlib, zipfile
           archive = pathlib.Path('cupra-source.zip')
-          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '7501cce84a4c9d8103d80737d6b2289dae39b091545be0902d9d907e871543e5'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'cf69a8644ad9ee96a4247247b85e3973b819907baddbca071ac7d84625b3d767'
           root = pathlib.Path.cwd().resolve()
           with zipfile.ZipFile(archive) as z:
               for entry in z.infolist():
