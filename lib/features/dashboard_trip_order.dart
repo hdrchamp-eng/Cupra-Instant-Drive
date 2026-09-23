@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../core/widgets/price_editor_dialog.dart';
+
 import '../app/app.dart';
 import '../app/router.dart';
 import '../core/data/demo_seed.dart';
 import '../core/design/app_theme.dart';
+import '../core/widgets/vehicle_photo.dart';
 import '../core/models/models.dart';
 import '../core/services/export_service.dart';
 import '../core/utils/booking_logic.dart';
@@ -218,7 +221,7 @@ class _UpcomingBooking extends StatelessWidget {
           SizedBox(
             height: 180,
             width: double.infinity,
-            child: Image.asset(vehicle.imageAsset, fit: BoxFit.cover),
+            child: VehiclePhoto(vehicle.imageAsset, fit: BoxFit.cover),
           ),
           Padding(
             padding: const EdgeInsets.all(18),
@@ -1622,39 +1625,13 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   Future<void> _editPrice(DrivePackage drivePackage) async {
-    final controller = TextEditingController(
-      text: ((prices[drivePackage] ?? 0) / 100).toStringAsFixed(2),
-    );
     final value = await showDialog<int>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('${_packageName(drivePackage)} bearbeiten'),
-        content: TextField(
-          controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Preis in CHF'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Abbrechen'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final francs = double.tryParse(
-                controller.text.replaceAll(',', '.'),
-              );
-              Navigator.pop(
-                dialogContext,
-                francs == null ? null : (francs * 100).round(),
-              );
-            },
-            child: const Text('Speichern'),
-          ),
-        ],
+      builder: (_) => PriceEditorDialog(
+        title: '${_packageName(drivePackage)} bearbeiten',
+        initialRappen: prices[drivePackage] ?? 0,
       ),
     );
-    controller.dispose();
     if (value != null && mounted) {
       setState(() => prices[drivePackage] = value);
     }

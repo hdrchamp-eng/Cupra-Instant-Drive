@@ -7,9 +7,11 @@ import '../app/app.dart';
 import '../app/router.dart';
 import '../core/data/demo_seed.dart';
 import '../core/design/app_theme.dart';
+import '../core/widgets/vehicle_photo.dart';
 import '../core/models/models.dart';
 import '../core/utils/discovery_logic.dart';
 import '../core/widgets/common.dart';
+import '../core/widgets/smooth_wheel_scroll.dart';
 import 'booking_auth.dart';
 import 'dashboard_trip_order.dart';
 
@@ -18,38 +20,41 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          pinned: true,
-          toolbarHeight: 70,
-          title: const BrandMark(compact: true),
-          actions: [
-            TextButton(
-              onPressed: () => AppRouter.push(context, const AuthScreen()),
-              child: Text(
-                AppScope.of(context).loggedIn ? 'Profil' : 'Anmelden',
+    body: SmoothWheelViewport(
+      builder: (controller) => CustomScrollView(
+        controller: controller,
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 70,
+            title: const BrandMark(compact: true),
+            actions: [
+              TextButton(
+                onPressed: () => AppRouter.push(context, const AuthScreen()),
+                child: Text(
+                  AppScope.of(context).loggedIn ? 'Profil' : 'Anmelden',
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Padding(
-              padding: const EdgeInsets.only(right: 14),
-              child: FilledButton(
-                onPressed: () => AppRouter.push(context, const MainShell()),
-                child: const Text('Demo starten'),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: FilledButton(
+                  onPressed: () => AppRouter.push(context, const MainShell()),
+                  child: const Text('Demo starten'),
+                ),
               ),
-            ),
-          ],
-        ),
-        SliverToBoxAdapter(
-          child: RepaintBoundary(
-            child: _Hero(
-              onStart: () => AppRouter.push(context, const MainShell()),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: RepaintBoundary(
+              child: _Hero(
+                onStart: () => AppRouter.push(context, const MainShell()),
+              ),
             ),
           ),
-        ),
-        const _LandingBody(),
-      ],
+          const _LandingBody(),
+        ],
+      ),
     ),
   );
 }
@@ -61,20 +66,76 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) {
       final compact = c.maxWidth < 900;
+      final content = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const StatusPill(
+            '24/7 · ZÜRICH & BASEL',
+            color: AppColors.copper,
+            icon: Icons.bolt,
+          ),
+          const SizedBox(height: 22),
+          Text(
+            'Einsteigen.\nTesten. Verlieben.',
+            style: compact
+                ? Theme.of(context).textTheme.displayMedium
+                : Theme.of(context).textTheme.displayLarge,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Deine autonome Probefahrt in unter 3 Minuten. 60–90 Minuten ohne Verkaufsdruck, mit digitaler Verifizierung und schlüssellosem Zugang.',
+            style: Theme.of(context).textTheme.bodyLarge
+                ?.copyWith(color: const Color(0xFFD6DBE3)),
+          ),
+          const SizedBox(height: 28),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              FilledButton.icon(
+                onPressed: onStart,
+                icon: const Icon(Icons.near_me_outlined),
+                label: const Text('CUPRA in der Nähe finden'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => showInfoDialog(
+                  context,
+                  'So funktioniert die Demo',
+                  'Suche ein Fahrzeug, verifiziere dich mit synthetischen Daten, buche eine Fahrt und simuliere Check-in, Entriegelung, Rückgabe und Bestellung.',
+                ),
+                icon: const Icon(Icons.play_circle_outline),
+                label: const Text('Ablauf ansehen'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'FIKTIVER MVP · KEINE OFFIZIELLE MARKENPARTNERSCHAFT',
+            style: TextStyle(
+              fontSize: 10,
+              color: AppColors.muted,
+              fontWeight: FontWeight.w800,
+              letterSpacing: .8,
+            ),
+          ),
+        ],
+      );
       final heroHeight = c.maxWidth < 500 ? 840.0 : (compact ? 720.0 : 700.0);
       return SizedBox(
         height: heroHeight,
         child: Stack(
+          key: const ValueKey('landing-background-hero'),
           fit: StackFit.expand,
           children: [
-            Image.asset(
+            VehiclePhoto(
               'assets/images/demo_hero.jpg',
+              key: const ValueKey('landing-background-car'),
               fit: BoxFit.cover,
               alignment: compact ? const Alignment(.35, 0) : Alignment.center,
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
+              excludeFromSemantics: true,
+              gradients: [
+                LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
@@ -83,11 +144,7 @@ class _Hero extends StatelessWidget {
                     AppColors.ink.withValues(alpha: .28),
                   ],
                 ),
-              ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
+                LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
@@ -95,7 +152,7 @@ class _Hero extends StatelessWidget {
                     AppColors.ink.withValues(alpha: .93),
                   ],
                 ),
-              ),
+              ],
             ),
             PageWidth(
               padding: EdgeInsets.fromLTRB(
@@ -110,61 +167,7 @@ class _Hero extends StatelessWidget {
                     : Alignment.centerLeft,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 610),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const StatusPill(
-                        '24/7 · ZÜRICH & BASEL',
-                        color: AppColors.copper,
-                        icon: Icons.bolt,
-                      ),
-                      const SizedBox(height: 22),
-                      Text(
-                        'Einsteigen.\nTesten. Verlieben.',
-                        style: compact
-                            ? Theme.of(context).textTheme.displayMedium
-                            : Theme.of(context).textTheme.displayLarge,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Deine autonome Probefahrt in unter 3 Minuten. 60–90 Minuten ohne Verkaufsdruck, mit digitaler Verifizierung und schlüssellosem Zugang.',
-                        style: Theme.of(context).textTheme.bodyLarge
-                            ?.copyWith(color: const Color(0xFFD6DBE3)),
-                      ),
-                      const SizedBox(height: 28),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: [
-                          FilledButton.icon(
-                            onPressed: onStart,
-                            icon: const Icon(Icons.near_me_outlined),
-                            label: const Text('CUPRA in der Nähe finden'),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: () => showInfoDialog(
-                              context,
-                              'So funktioniert die Demo',
-                              'Suche ein Fahrzeug, verifiziere dich mit synthetischen Daten, buche eine Fahrt und simuliere Check-in, Entriegelung, Rückgabe und Bestellung.',
-                            ),
-                            icon: const Icon(Icons.play_circle_outline),
-                            label: const Text('Ablauf ansehen'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'FIKTIVER MVP · KEINE OFFIZIELLE MARKENPARTNERSCHAFT',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.muted,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: .8,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: content,
                 ),
               ),
             ),
@@ -190,30 +193,34 @@ class _LandingBody extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, c) {
                   final count = c.maxWidth > 900 ? 3 : 1;
-                  return GridView.count(
-                    crossAxisCount: count,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 14,
-                    mainAxisSpacing: 14,
-                    childAspectRatio: count == 3 ? 1.55 : 2.35,
-                    children: const [
-                      _Benefit(
-                        Icons.phone_iphone,
-                        'App auf. CUPRA auf.',
-                        'Führerschein und ID im sicheren Demo-Modus prüfen. Danach schlüssellos starten.',
-                      ),
-                      _Benefit(
-                        Icons.location_city_outlined,
-                        'Mitten in deiner Stadt',
-                        'Fahrzeuge an Bahnhöfen, Einkaufszentren und zentralen Parkhäusern.',
-                      ),
-                      _Benefit(
-                        Icons.no_accounts_outlined,
-                        '0 % Verkaufsdruck',
-                        'Teste Reichweite, Platz und Fahrgefühl in deinem echten Alltag.',
-                      ),
-                    ],
+                  return Wrap(
+                    spacing: 14,
+                    runSpacing: 14,
+                    children:
+                        const <Widget>[
+                              _Benefit(
+                                Icons.phone_iphone,
+                                'App auf. CUPRA auf.',
+                                'Führerschein und ID im sicheren Demo-Modus prüfen. Danach schlüssellos starten.',
+                              ),
+                              _Benefit(
+                                Icons.location_city_outlined,
+                                'Mitten in deiner Stadt',
+                                'Fahrzeuge an Bahnhöfen, Einkaufszentren und zentralen Parkhäusern.',
+                              ),
+                              _Benefit(
+                                Icons.no_accounts_outlined,
+                                '0 % Verkaufsdruck',
+                                'Teste Reichweite, Platz und Fahrgefühl in deinem echten Alltag.',
+                              ),
+                            ]
+                            .map(
+                              (benefit) => SizedBox(
+                                width: (c.maxWidth - 14 * (count - 1)) / count,
+                                child: benefit,
+                              ),
+                            )
+                            .toList(),
                   );
                 },
               ),
@@ -481,7 +488,7 @@ class _PublicVehicleCard extends StatelessWidget {
             child: Semantics(
               image: true,
               label: 'CUPRA ${vehicle.model} ${vehicle.variant}',
-              child: Image.asset(
+              child: VehiclePhoto(
                 vehicle.imageAsset,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -563,7 +570,7 @@ class _Benefit extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: AppColors.copper, size: 28),
-          const Spacer(),
+          const SizedBox(height: 20),
           Text(title, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 7),
           Text(text),
@@ -828,233 +835,242 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
 
   @override
   Widget build(BuildContext context) => PageWidth(
-    child: SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final heading = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'CUPRA in deiner Nähe',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  const Text('Alle aktuellen Modelle · Zürich, Basel und Bern'),
-                ],
-              );
-              final viewSwitch = SegmentedButton<bool>(
-                segments: const [
-                  ButtonSegment(
-                    value: false,
-                    icon: Icon(Icons.view_list),
-                    label: Text('Liste'),
-                  ),
-                  ButtonSegment(
-                    value: true,
-                    icon: Icon(Icons.map_outlined),
-                    label: Text('Karte'),
-                  ),
-                ],
-                selected: {mapMode},
-                onSelectionChanged: (v) => setState(() => mapMode = v.first),
-              );
-              if (constraints.maxWidth < 600) {
-                return Column(
+    child: SmoothWheelViewport(
+      builder: (controller) => SingleChildScrollView(
+        controller: controller,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final heading = Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [heading, const SizedBox(height: 14), viewSwitch],
+                  children: [
+                    Text(
+                      'CUPRA in deiner Nähe',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Alle aktuellen Modelle · Zürich, Basel und Bern',
+                    ),
+                  ],
                 );
-              }
-              return Row(
-                children: [
-                  Expanded(child: heading),
-                  viewSwitch,
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-          TextField(
-            controller: searchController,
-            onChanged: (value) => setState(() => query = value),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search),
-              hintText: 'Ort, PLZ, Hub oder Modell',
-              suffixIcon: IconButton(
-                tooltip: 'Standort verwenden',
-                onPressed: () {
-                  setState(() {
-                    permissionAsked = true;
-                    query = 'Zürich';
-                    searchController.text = query;
-                    searchController.selection = TextSelection.collapsed(
-                      offset: query.length,
+                final viewSwitch = SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(
+                      value: false,
+                      icon: Icon(Icons.view_list),
+                      label: Text('Liste'),
+                    ),
+                    ButtonSegment(
+                      value: true,
+                      icon: Icon(Icons.map_outlined),
+                      label: Text('Karte'),
+                    ),
+                  ],
+                  selected: {mapMode},
+                  onSelectionChanged: (v) => setState(() => mapMode = v.first),
+                );
+                if (constraints.maxWidth < 600) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [heading, const SizedBox(height: 14), viewSwitch],
+                  );
+                }
+                return Row(
+                  children: [
+                    Expanded(child: heading),
+                    viewSwitch,
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 18),
+            TextField(
+              controller: searchController,
+              onChanged: (value) => setState(() => query = value),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Ort, PLZ, Hub oder Modell',
+                suffixIcon: IconButton(
+                  tooltip: 'Standort verwenden',
+                  onPressed: () {
+                    setState(() {
+                      permissionAsked = true;
+                      query = 'Zürich';
+                      searchController.text = query;
+                      searchController.selection = TextSelection.collapsed(
+                        offset: query.length,
+                      );
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Demo-Standort Zürich verwendet. Kein echter Standortzugriff.',
+                        ),
+                      ),
                     );
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Demo-Standort Zürich verwendet. Kein echter Standortzugriff.',
+                  },
+                  icon: const Icon(Icons.my_location),
+                ),
+              ),
+            ),
+            if (permissionAsked)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'Standort-Sandbox aktiv · Zürich Zentrum',
+                  style: TextStyle(fontSize: 11, color: AppColors.copper),
+                ),
+              ),
+            const SizedBox(height: 13),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final modelPicker = DropdownButtonFormField<String>(
+                  initialValue: model,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'CUPRA Modell',
+                    prefixIcon: Icon(Icons.directions_car_outlined),
+                  ),
+                  items: [
+                    for (final item in modelNames)
+                      DropdownMenuItem(value: item, child: Text(item)),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) setState(() => model = value);
+                  },
+                );
+                final actions = Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    FilterChip(
+                      avatar: const Icon(Icons.bolt, size: 18),
+                      label: const Text('Nur verfügbare'),
+                      selected: availableOnly,
+                      onSelected: (v) => setState(() => availableOnly = v),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.tune, size: 18),
+                      label: const Text('Weitere Filter'),
+                      onPressed: _showMoreFilters,
+                    ),
+                  ],
+                );
+                if (constraints.maxWidth < 720) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      modelPicker,
+                      const SizedBox(height: 10),
+                      actions,
+                    ],
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 320, child: modelPicker),
+                    const SizedBox(width: 12),
+                    Expanded(child: actions),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Text(
+                  'Sortierung:',
+                  style: TextStyle(fontSize: 12, color: AppColors.muted),
+                ),
+                SizedBox(
+                  width: 235,
+                  child: DropdownButton<VehicleSort>(
+                    value: sortMode,
+                    isExpanded: true,
+                    items: const [
+                      DropdownMenuItem(
+                        value: VehicleSort.distance,
+                        child: Text('Entfernung'),
+                      ),
+                      DropdownMenuItem(
+                        value: VehicleSort.earliestAvailability,
+                        child: Text('Früheste Verfügbarkeit'),
+                      ),
+                      DropdownMenuItem(
+                        value: VehicleSort.price,
+                        child: Text('Preis'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setState(() => sortMode = value);
+                    },
+                  ),
+                ),
+                if (powertrain != 'Alle') Chip(label: Text(powertrain)),
+                if (packageFilter != null)
+                  Chip(label: Text(_packageFilterLabel(packageFilter!))),
+                if (deliveryOnly) const Chip(label: Text('Lieferung')),
+                Chip(label: Text('bis ${maxDistance.round()} km')),
+              ],
+            ),
+            const SizedBox(height: 18),
+            if (searchLoading)
+              const _SearchLoading()
+            else if (searchError case final message?)
+              _SearchError(
+                message: message,
+                onRetry: () => setState(() => searchError = null),
+              )
+            else if (filtered.isEmpty)
+              const _EmptySearch()
+            else if (mapMode)
+              _InteractiveMap(
+                vehicles: filtered,
+                onVehicle: (vehicle) => AppRouter.push(
+                  context,
+                  VehicleDetailScreen(vehicle: vehicle),
+                ),
+              )
+            else ...[
+              Text(
+                '${filtered.length} Fahrzeuge · sortiert nach ${vehicleSortLabel(sortMode)}',
+                style: const TextStyle(fontSize: 12, color: AppColors.muted),
+              ),
+              const SizedBox(height: 10),
+              LayoutBuilder(
+                builder: (context, c) {
+                  final cols = c.maxWidth > 850 ? 2 : 1;
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtered.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: cols,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      mainAxisExtent: cols == 2 ? 385 : 350,
+                    ),
+                    itemBuilder: (_, i) => VehicleCard(
+                      vehicle: filtered[i],
+                      onTap: () => AppRouter.push(
+                        context,
+                        VehicleDetailScreen(vehicle: filtered[i]),
                       ),
                     ),
                   );
                 },
-                icon: const Icon(Icons.my_location),
               ),
-            ),
-          ),
-          if (permissionAsked)
-            const Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: Text(
-                'Standort-Sandbox aktiv · Zürich Zentrum',
-                style: TextStyle(fontSize: 11, color: AppColors.copper),
-              ),
-            ),
-          const SizedBox(height: 13),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final modelPicker = DropdownButtonFormField<String>(
-                initialValue: model,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'CUPRA Modell',
-                  prefixIcon: Icon(Icons.directions_car_outlined),
-                ),
-                items: [
-                  for (final item in modelNames)
-                    DropdownMenuItem(value: item, child: Text(item)),
-                ],
-                onChanged: (value) {
-                  if (value != null) setState(() => model = value);
-                },
-              );
-              final actions = Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  FilterChip(
-                    avatar: const Icon(Icons.bolt, size: 18),
-                    label: const Text('Nur verfügbare'),
-                    selected: availableOnly,
-                    onSelected: (v) => setState(() => availableOnly = v),
-                  ),
-                  ActionChip(
-                    avatar: const Icon(Icons.tune, size: 18),
-                    label: const Text('Weitere Filter'),
-                    onPressed: _showMoreFilters,
-                  ),
-                ],
-              );
-              if (constraints.maxWidth < 720) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [modelPicker, const SizedBox(height: 10), actions],
-                );
-              }
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 320, child: modelPicker),
-                  const SizedBox(width: 12),
-                  Expanded(child: actions),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 10,
-            runSpacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              const Text(
-                'Sortierung:',
-                style: TextStyle(fontSize: 12, color: AppColors.muted),
-              ),
-              SizedBox(
-                width: 235,
-                child: DropdownButton<VehicleSort>(
-                  value: sortMode,
-                  isExpanded: true,
-                  items: const [
-                    DropdownMenuItem(
-                      value: VehicleSort.distance,
-                      child: Text('Entfernung'),
-                    ),
-                    DropdownMenuItem(
-                      value: VehicleSort.earliestAvailability,
-                      child: Text('Früheste Verfügbarkeit'),
-                    ),
-                    DropdownMenuItem(
-                      value: VehicleSort.price,
-                      child: Text('Preis'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => sortMode = value);
-                  },
-                ),
-              ),
-              if (powertrain != 'Alle') Chip(label: Text(powertrain)),
-              if (packageFilter != null)
-                Chip(label: Text(_packageFilterLabel(packageFilter!))),
-              if (deliveryOnly) const Chip(label: Text('Lieferung')),
-              Chip(label: Text('bis ${maxDistance.round()} km')),
             ],
-          ),
-          const SizedBox(height: 18),
-          if (searchLoading)
-            const _SearchLoading()
-          else if (searchError case final message?)
-            _SearchError(
-              message: message,
-              onRetry: () => setState(() => searchError = null),
-            )
-          else if (filtered.isEmpty)
-            const _EmptySearch()
-          else if (mapMode)
-            _InteractiveMap(
-              vehicles: filtered,
-              onVehicle: (vehicle) => AppRouter.push(
-                context,
-                VehicleDetailScreen(vehicle: vehicle),
-              ),
-            )
-          else ...[
-            Text(
-              '${filtered.length} Fahrzeuge · sortiert nach ${vehicleSortLabel(sortMode)}',
-              style: const TextStyle(fontSize: 12, color: AppColors.muted),
-            ),
-            const SizedBox(height: 10),
-            LayoutBuilder(
-              builder: (context, c) {
-                final cols = c.maxWidth > 850 ? 2 : 1;
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filtered.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: cols,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: cols == 2 ? 385 : 350,
-                  ),
-                  itemBuilder: (_, i) => VehicleCard(
-                    vehicle: filtered[i],
-                    onTap: () => AppRouter.push(
-                      context,
-                      VehicleDetailScreen(vehicle: filtered[i]),
-                    ),
-                  ),
-                );
-              },
-            ),
           ],
-        ],
+        ),
       ),
     ),
   );
@@ -1098,7 +1114,7 @@ class VehicleCard extends StatelessWidget {
                   Semantics(
                     image: true,
                     label: 'CUPRA ${vehicle.model} ${vehicle.variant}',
-                    child: Image.asset(
+                    child: VehiclePhoto(
                       vehicle.imageAsset,
                       fit: BoxFit.cover,
                       errorBuilder: (_, _, _) => ColoredBox(

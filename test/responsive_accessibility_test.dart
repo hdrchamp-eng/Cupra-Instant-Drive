@@ -1,4 +1,5 @@
 import 'package:cupra_instant_drive/app/app.dart';
+import 'package:cupra_instant_drive/core/widgets/vehicle_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,6 +54,19 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(find.text('CUPRA in der Nähe finden'), findsOneWidget);
+        final hero = tester.widget<VehiclePhoto>(
+          find.byKey(const ValueKey('landing-background-car')),
+        );
+        expect(hero.fit, BoxFit.cover);
+        expect(
+          find.byKey(const ValueKey('landing-foreground-car')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('landing-background-hero')),
+          findsOneWidget,
+        );
+        expect(hero.asset, 'assets/images/demo_hero.jpg');
       },
     );
   }
@@ -81,6 +95,8 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(const InstantDriveApp());
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('CUPRA in der Nähe finden'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('CUPRA in der Nähe finden'));
     await tester.pumpAndSettle();

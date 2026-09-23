@@ -3,6 +3,7 @@ import 'package:cupra_instant_drive/app/app_state.dart';
 import 'package:cupra_instant_drive/core/data/demo_seed.dart';
 import 'package:cupra_instant_drive/core/design/app_theme.dart';
 import 'package:cupra_instant_drive/core/models/models.dart';
+import 'package:cupra_instant_drive/core/widgets/vehicle_photo.dart';
 import 'package:cupra_instant_drive/features/booking_auth.dart';
 import 'package:cupra_instant_drive/features/dashboard_trip_order.dart';
 import 'package:cupra_instant_drive/features/landing_discovery.dart';
@@ -23,6 +24,42 @@ void usePhoneViewport(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('Admin Weekend price survives closing the focused edit dialog', (
+    tester,
+  ) async {
+    usePhoneViewport(tester);
+    SharedPreferences.setMockInitialValues({});
+    final state = AppState();
+    await state.initialize();
+    await state.demoLogin(admin: true);
+    await tester.pumpWidget(scoped(state, const Scaffold(body: AdminScreen())));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Wochenende Premium'),
+      450,
+      scrollable: find.byType(Scrollable).first,
+      maxScrolls: 20,
+    );
+    await tester.drag(find.byType(ListView).first, const Offset(0, -200));
+    await tester.pumpAndSettle();
+    final row = find.ancestor(
+      of: find.text('Wochenende Premium'),
+      matching: find.byType(ListTile),
+    );
+    await tester.tap(
+      find.descendant(of: row, matching: find.byType(IconButton)),
+    );
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '89.50');
+    await tester.tap(find.text('Speichern'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80));
+    expect(tester.takeException(), isNull);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('CHF 89.50'), findsOneWidget);
+  });
+
   testWidgets('Registrierung enthält alle geforderten Profildaten', (
     tester,
   ) async {
@@ -72,8 +109,8 @@ void main() {
       const ValueKey('booking-confirmation-vehicle-image'),
     );
     expect(confirmationImage, findsOneWidget);
-    final imageWidget = tester.widget<Image>(confirmationImage);
-    expect((imageWidget.image as AssetImage).assetName, vehicle.imageAsset);
+    final imageWidget = tester.widget<VehiclePhoto>(confirmationImage);
+    expect(imageWidget.asset, vehicle.imageAsset);
     await tester.scrollUntilVisible(
       find.text('Zu meinen Buchungen'),
       350,

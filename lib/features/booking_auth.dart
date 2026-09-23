@@ -5,6 +5,7 @@ import '../app/app_state.dart';
 import '../app/router.dart';
 import '../core/data/demo_seed.dart';
 import '../core/design/app_theme.dart';
+import '../core/widgets/vehicle_photo.dart';
 import '../core/models/models.dart';
 import '../core/services/export_service.dart';
 import '../core/services/sandbox_adapters.dart';
@@ -354,7 +355,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
                     Color(widget.vehicle.accent).withValues(alpha: .13),
                     BlendMode.color,
                   ),
-                  child: Image.asset(
+                  child: VehiclePhoto(
                     widget.vehicle.imageAsset,
                     fit: BoxFit.cover,
                   ),
@@ -1144,7 +1145,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.asset(
+                        VehiclePhoto(
                           vehicle.imageAsset,
                           key: const ValueKey(
                             'booking-confirmation-vehicle-image',
