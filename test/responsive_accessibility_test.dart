@@ -4,6 +4,38 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  testWidgets('Landing scrolls through lazy sections with one scroll owner', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const InstantDriveApp());
+    await tester.pumpAndSettle();
+    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.text('Impressum'), findsNothing);
+    final scrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(
+      find.text('Impressum'),
+      450,
+      scrollable: scrollable,
+      maxScrolls: 40,
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Impressum'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('CUPRA in der Nähe finden'),
+      -450,
+      scrollable: scrollable,
+      maxScrolls: 40,
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   for (final size in <Size>[
     const Size(390, 844),
     const Size(820, 1180),

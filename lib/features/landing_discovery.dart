@@ -42,11 +42,13 @@ class LandingScreen extends StatelessWidget {
           ],
         ),
         SliverToBoxAdapter(
-          child: _Hero(
-            onStart: () => AppRouter.push(context, const MainShell()),
+          child: RepaintBoundary(
+            child: _Hero(
+              onStart: () => AppRouter.push(context, const MainShell()),
+            ),
           ),
         ),
-        const SliverToBoxAdapter(child: _LandingBody()),
+        const _LandingBody(),
       ],
     ),
   );
@@ -176,275 +178,288 @@ class _Hero extends StatelessWidget {
 class _LandingBody extends StatelessWidget {
   const _LandingBody();
   @override
-  Widget build(BuildContext context) => PageWidth(
-    child: SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 34),
-          const SectionTitle(
-            'Probefahren, wie es heute sein sollte.',
-            kicker: 'Warum Instant Drive',
-          ),
-          const SizedBox(height: 22),
-          LayoutBuilder(
-            builder: (context, c) {
-              final count = c.maxWidth > 900 ? 3 : 1;
-              return GridView.count(
-                crossAxisCount: count,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: count == 3 ? 1.55 : 2.35,
-                children: const [
-                  _Benefit(
-                    Icons.phone_iphone,
-                    'App auf. CUPRA auf.',
-                    'Führerschein und ID im sicheren Demo-Modus prüfen. Danach schlüssellos starten.',
+  Widget build(BuildContext context) => SliverList.list(
+    children:
+        <Widget>[
+              const SizedBox(height: 34),
+              const SectionTitle(
+                'Probefahren, wie es heute sein sollte.',
+                kicker: 'Warum Instant Drive',
+              ),
+              const SizedBox(height: 22),
+              LayoutBuilder(
+                builder: (context, c) {
+                  final count = c.maxWidth > 900 ? 3 : 1;
+                  return GridView.count(
+                    crossAxisCount: count,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 14,
+                    mainAxisSpacing: 14,
+                    childAspectRatio: count == 3 ? 1.55 : 2.35,
+                    children: const [
+                      _Benefit(
+                        Icons.phone_iphone,
+                        'App auf. CUPRA auf.',
+                        'Führerschein und ID im sicheren Demo-Modus prüfen. Danach schlüssellos starten.',
+                      ),
+                      _Benefit(
+                        Icons.location_city_outlined,
+                        'Mitten in deiner Stadt',
+                        'Fahrzeuge an Bahnhöfen, Einkaufszentren und zentralen Parkhäusern.',
+                      ),
+                      _Benefit(
+                        Icons.no_accounts_outlined,
+                        '0 % Verkaufsdruck',
+                        'Teste Reichweite, Platz und Fahrgefühl in deinem echten Alltag.',
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 64),
+              const SectionTitle(
+                'In vier Schritten auf die Strasse.',
+                kicker: 'Unter 3 Minuten startbereit',
+              ),
+              const SizedBox(height: 22),
+              const Wrap(
+                runSpacing: 12,
+                children: [
+                  _Step(
+                    '01',
+                    'Fahrzeug wählen',
+                    'Alle aktuellen CUPRA Modelle vergleichen und am passenden Hub finden.',
                   ),
-                  _Benefit(
-                    Icons.location_city_outlined,
-                    'Mitten in deiner Stadt',
-                    'Fahrzeuge an Bahnhöfen, Einkaufszentren und zentralen Parkhäusern.',
+                  _Step(
+                    '02',
+                    'Sicher verifizieren',
+                    'Synthetischer ID- und Führerscheincheck ohne Dokumentübertragung.',
                   ),
-                  _Benefit(
-                    Icons.no_accounts_outlined,
-                    '0 % Verkaufsdruck',
-                    'Teste Reichweite, Platz und Fahrgefühl in deinem echten Alltag.',
+                  _Step(
+                    '03',
+                    'Keyless starten',
+                    'Fahrzeug finden, Zustand prüfen und Entriegelung simulieren.',
+                  ),
+                  _Step(
+                    '04',
+                    'Direkt entscheiden',
+                    'Nach der Rückgabe Kauf, Leasing oder Auto-Abo konfigurieren.',
                   ),
                 ],
-              );
-            },
-          ),
-          const SizedBox(height: 64),
-          const SectionTitle(
-            'In vier Schritten auf die Strasse.',
-            kicker: 'Unter 3 Minuten startbereit',
-          ),
-          const SizedBox(height: 22),
-          const Wrap(
-            runSpacing: 12,
-            children: [
-              _Step(
-                '01',
-                'Fahrzeug wählen',
-                'Alle aktuellen CUPRA Modelle vergleichen und am passenden Hub finden.',
               ),
-              _Step(
-                '02',
-                'Sicher verifizieren',
-                'Synthetischer ID- und Führerscheincheck ohne Dokumentübertragung.',
+              const SizedBox(height: 64),
+              const SectionTitle(
+                'Deine Fahrt. Dein Paket.',
+                kicker: 'Transparent in CHF',
               ),
-              _Step(
-                '03',
-                'Keyless starten',
-                'Fahrzeug finden, Zustand prüfen und Entriegelung simulieren.',
-              ),
-              _Step(
-                '04',
-                'Direkt entscheiden',
-                'Nach der Rückgabe Kauf, Leasing oder Auto-Abo konfigurieren.',
-              ),
-            ],
-          ),
-          const SizedBox(height: 64),
-          const SectionTitle(
-            'Deine Fahrt. Dein Paket.',
-            kicker: 'Transparent in CHF',
-          ),
-          const SizedBox(height: 22),
-          LayoutBuilder(
-            builder: (context, c) {
-              const standard = _PriceCard(
-                'STANDARD',
-                'CHF 0.00',
-                '60 Minuten · Mo–Fr',
-                ['Zentraler Hub', 'Basisversicherung', 'Keyless-Sandbox'],
-              );
-              const extended = _PriceCard(
-                'EXTENDED',
-                'CHF 29.00',
-                '90 Minuten',
-                ['Mehr Zeit im Alltag', 'Flexible Slots', 'Optional Lieferung'],
-                featured: true,
-              );
-              const weekend = _PriceCard(
-                'WEEKEND',
-                'CHF 79.00',
-                '48 Stunden · Demo',
-                ['Langzeittest', 'Performance verfügbar', 'Premium Support'],
-              );
-              if (c.maxWidth > 720) {
-                return const IntrinsicHeight(
-                  child: Row(
+              const SizedBox(height: 22),
+              LayoutBuilder(
+                builder: (context, c) {
+                  const standard = _PriceCard(
+                    'STANDARD',
+                    'CHF 0.00',
+                    '60 Minuten · Mo–Fr',
+                    ['Zentraler Hub', 'Basisversicherung', 'Keyless-Sandbox'],
+                  );
+                  const extended = _PriceCard(
+                    'EXTENDED',
+                    'CHF 29.00',
+                    '90 Minuten',
+                    [
+                      'Mehr Zeit im Alltag',
+                      'Flexible Slots',
+                      'Optional Lieferung',
+                    ],
+                    featured: true,
+                  );
+                  const weekend = _PriceCard(
+                    'WEEKEND',
+                    'CHF 79.00',
+                    '48 Stunden · Demo',
+                    [
+                      'Langzeittest',
+                      'Performance verfügbar',
+                      'Premium Support',
+                    ],
+                  );
+                  if (c.maxWidth > 720) {
+                    return const IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: standard),
+                          SizedBox(width: 14),
+                          Expanded(child: extended),
+                          SizedBox(width: 14),
+                          Expanded(child: weekend),
+                        ],
+                      ),
+                    );
+                  }
+                  return const Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(child: standard),
-                      SizedBox(width: 14),
-                      Expanded(child: extended),
-                      SizedBox(width: 14),
-                      Expanded(child: weekend),
+                      standard,
+                      SizedBox(height: 14),
+                      extended,
+                      SizedBox(height: 14),
+                      weekend,
                     ],
-                  ),
-                );
-              }
-              return const Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                  );
+                },
+              ),
+              const SizedBox(height: 64),
+              const SectionTitle(
+                'Wähle deinen Alltagstest.',
+                kicker: 'Demo-Fahrzeuge',
+              ),
+              const SizedBox(height: 22),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns = constraints.maxWidth >= 960 ? 3 : 1;
+                  return GridView.count(
+                    crossAxisCount: columns,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 14,
+                    mainAxisSpacing: 14,
+                    childAspectRatio: columns == 3 ? 1.05 : 1.8,
+                    children: [
+                      for (final vehicle in demoVehicles)
+                        _PublicVehicleCard(
+                          vehicle: vehicle,
+                          onTap: () => AppRouter.push(
+                            context,
+                            VehicleDetailScreen(vehicle: vehicle),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 64),
+              const SectionTitle(
+                'Dort, wo du ohnehin bist.',
+                kicker: 'Hubs in der Schweiz',
+              ),
+              const SizedBox(height: 22),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
                 children: [
-                  standard,
-                  SizedBox(height: 14),
-                  extended,
-                  SizedBox(height: 14),
-                  weekend,
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 64),
-          const SectionTitle(
-            'Wähle deinen Alltagstest.',
-            kicker: 'Demo-Fahrzeuge',
-          ),
-          const SizedBox(height: 22),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final columns = constraints.maxWidth >= 960 ? 3 : 1;
-              return GridView.count(
-                crossAxisCount: columns,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: columns == 3 ? 1.05 : 1.8,
-                children: [
-                  for (final vehicle in demoVehicles)
-                    _PublicVehicleCard(
-                      vehicle: vehicle,
-                      onTap: () => AppRouter.push(
-                        context,
-                        VehicleDetailScreen(vehicle: vehicle),
-                      ),
+                  for (final hub in demoHubs)
+                    _HubPreviewCard(
+                      hub: hub,
+                      onTap: () => AppRouter.push(context, const MainShell()),
                     ),
                 ],
-              );
-            },
-          ),
-          const SizedBox(height: 64),
-          const SectionTitle(
-            'Dort, wo du ohnehin bist.',
-            kicker: 'Hubs in der Schweiz',
-          ),
-          const SizedBox(height: 22),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              for (final hub in demoHubs)
-                _HubPreviewCard(
-                  hub: hub,
-                  onTap: () => AppRouter.push(context, const MainShell()),
+              ),
+              const SizedBox(height: 64),
+              const SectionTitle(
+                'Häufig gefragt.',
+                kicker: 'Sicherheit & Datenschutz',
+              ),
+              const SizedBox(height: 12),
+              const _Faq(
+                'Ist das eine echte Fahrzeugbuchung?',
+                'Nein. Dieser MVP ist ein fiktiver Prototyp. Fahrzeuge, Zahlungen, Versicherungen und Entriegelungen werden ausschliesslich simuliert.',
+              ),
+              const _Faq(
+                'Werden Ausweis oder Führerschein gespeichert?',
+                'Nein. Nutze nur den integrierten Demo-Erfolgspfad. Es werden keine Dokumentbilder übertragen oder gespeichert.',
+              ),
+              const _Faq(
+                'Was ist versichert?',
+                'Die angezeigten Versicherungs- und Haftungsbedingungen sind Demo-Platzhalter und keine Rechtsberatung oder Deckungszusage.',
+              ),
+              const SizedBox(height: 42),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(26),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceHigh,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.line),
                 ),
-            ],
-          ),
-          const SizedBox(height: 64),
-          const SectionTitle(
-            'Häufig gefragt.',
-            kicker: 'Sicherheit & Datenschutz',
-          ),
-          const SizedBox(height: 12),
-          const _Faq(
-            'Ist das eine echte Fahrzeugbuchung?',
-            'Nein. Dieser MVP ist ein fiktiver Prototyp. Fahrzeuge, Zahlungen, Versicherungen und Entriegelungen werden ausschliesslich simuliert.',
-          ),
-          const _Faq(
-            'Werden Ausweis oder Führerschein gespeichert?',
-            'Nein. Nutze nur den integrierten Demo-Erfolgspfad. Es werden keine Dokumentbilder übertragen oder gespeichert.',
-          ),
-          const _Faq(
-            'Was ist versichert?',
-            'Die angezeigten Versicherungs- und Haftungsbedingungen sind Demo-Platzhalter und keine Rechtsberatung oder Deckungszusage.',
-          ),
-          const SizedBox(height: 42),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(26),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.line),
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              runSpacing: 18,
-              children: [
-                SizedBox(
-                  width: 560,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Bereit für 100 % Alltagstest?',
-                        style: Theme.of(context).textTheme.headlineMedium,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: 18,
+                  children: [
+                    SizedBox(
+                      width: 560,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bereit für 100 % Alltagstest?',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          const SizedBox(height: 7),
+                          const Text(
+                            'Finde jetzt ein Demo-Fahrzeug in Zürich oder Basel.',
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 7),
-                      const Text(
-                        'Finde jetzt ein Demo-Fahrzeug in Zürich oder Basel.',
-                      ),
-                    ],
+                    ),
+                    FilledButton.icon(
+                      onPressed: () =>
+                          AppRouter.push(context, const MainShell()),
+                      icon: const Icon(Icons.arrow_forward),
+                      label: const Text('Fahrzeuge entdecken'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              const Divider(),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 14,
+                runSpacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const BrandMark(compact: true),
+                  TextButton(
+                    onPressed: () => showInfoDialog(
+                      context,
+                      'Impressum · Demo-Platzhalter',
+                      'Fiktiver Hochschul-/Produktprototyp. Keine offizielle Partnerschaft mit CUPRA, AMAG oder Zurich. Vor Veröffentlichung durch geprüfte Anbieterangaben ersetzen.',
+                    ),
+                    child: const Text('Impressum'),
                   ),
-                ),
-                FilledButton.icon(
-                  onPressed: () => AppRouter.push(context, const MainShell()),
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Fahrzeuge entdecken'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 40),
-          const Divider(),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 14,
-            runSpacing: 10,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              const BrandMark(compact: true),
-              TextButton(
-                onPressed: () => showInfoDialog(
-                  context,
-                  'Impressum · Demo-Platzhalter',
-                  'Fiktiver Hochschul-/Produktprototyp. Keine offizielle Partnerschaft mit CUPRA, AMAG oder Zurich. Vor Veröffentlichung durch geprüfte Anbieterangaben ersetzen.',
-                ),
-                child: const Text('Impressum'),
+                  TextButton(
+                    onPressed: () => showInfoDialog(
+                      context,
+                      'Datenschutz · Demo-Platzhalter',
+                      'Es werden lokal nur minimale synthetische Demo-Daten gespeichert. Keine Dokumentbilder, Passwörter oder Zahlungsdaten. Für Auskunft oder Löschung kann der lokale Demo-Stand über „Abmelden“ zurückgesetzt werden.',
+                    ),
+                    child: const Text('Datenschutz'),
+                  ),
+                  TextButton(
+                    onPressed: () => showInfoDialog(
+                      context,
+                      'AGB · Demo-Platzhalter',
+                      'Diese Ansicht ist keine Rechtsberatung. Es entstehen keine Reservierung, Zahlung, Versicherung und kein Kauf-, Leasing- oder Kreditvertrag.',
+                    ),
+                    child: const Text('AGB'),
+                  ),
+                  const Text(
+                    'Fiktiver MVP/Prototyp · Rechtstexte sind Platzhalter',
+                    style: TextStyle(fontSize: 11, color: AppColors.muted),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => showInfoDialog(
-                  context,
-                  'Datenschutz · Demo-Platzhalter',
-                  'Es werden lokal nur minimale synthetische Demo-Daten gespeichert. Keine Dokumentbilder, Passwörter oder Zahlungsdaten. Für Auskunft oder Löschung kann der lokale Demo-Stand über „Abmelden“ zurückgesetzt werden.',
-                ),
-                child: const Text('Datenschutz'),
+              const SizedBox(height: 36),
+            ]
+            .map(
+              (section) => PageWidth(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: section,
               ),
-              TextButton(
-                onPressed: () => showInfoDialog(
-                  context,
-                  'AGB · Demo-Platzhalter',
-                  'Diese Ansicht ist keine Rechtsberatung. Es entstehen keine Reservierung, Zahlung, Versicherung und kein Kauf-, Leasing- oder Kreditvertrag.',
-                ),
-                child: const Text('AGB'),
-              ),
-              const Text(
-                'Fiktiver MVP/Prototyp · Rechtstexte sind Platzhalter',
-                style: TextStyle(fontSize: 11, color: AppColors.muted),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
+            )
+            .toList(),
   );
 }
 
