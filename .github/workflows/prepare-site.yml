@@ -29,7 +29,7 @@ jobs:
           python3 - <<'PY'
           import hashlib, pathlib, zipfile
           archive = pathlib.Path('cupra-source.zip')
-          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '6fc97d6e0689a9d81c449c78d32b688d16bb9fe566dc79c77fa59beedcc8b249'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '7501cce84a4c9d8103d80737d6b2289dae39b091545be0902d9d907e871543e5'
           root = pathlib.Path.cwd().resolve()
           with zipfile.ZipFile(archive) as z:
               for entry in z.infolist():
@@ -53,7 +53,7 @@ jobs:
           flutter pub get
           flutter analyze
           flutter test
-          flutter build web --release --base-href /Cupra-Instant-Drive/
+          flutter build web --release --wasm --base-href /Cupra-Instant-Drive/
           cp -R build/web/. docs/
           touch docs/.nojekyll
       - name: Verify Pages package
