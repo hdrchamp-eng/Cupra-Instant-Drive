@@ -266,15 +266,15 @@ class _LandingBody extends StatelessWidget {
                   const standard = _PriceCard(
                     'STANDARD',
                     'CHF 0.00',
-                    '60 Minuten · Mo–Fr',
+                    '60–90 Minuten · Mo–Fr',
                     ['Zentraler Hub', 'Basisversicherung', 'Keyless-Sandbox'],
                   );
                   const extended = _PriceCard(
                     'EXTENDED',
                     'CHF 29.00',
-                    '90 Minuten',
+                    '24 Stunden · Mo–Fr',
                     [
-                      'Mehr Zeit im Alltag',
+                      '24 Stunden Fahrzeit',
                       'Flexible Slots',
                       'Optional Lieferung',
                     ],
@@ -1076,8 +1076,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   );
 
   static String _packageFilterLabel(DrivePackage value) => switch (value) {
-    DrivePackage.standard60 => '60 Min kostenlos',
-    DrivePackage.extended90 => '90 Minuten',
+    DrivePackage.standard60 => '60–90 Min kostenlos',
+    DrivePackage.extended90 => '24 Stunden · Mo–Fr',
     DrivePackage.weekend => 'Wochenende',
   };
 }

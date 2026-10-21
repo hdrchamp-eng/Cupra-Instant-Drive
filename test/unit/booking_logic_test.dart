@@ -9,6 +9,10 @@ void main() {
       () => expect(packagePriceRappen(DrivePackage.standard60), 0),
     );
     test(
+      'Extended kostet CHF 29.00',
+      () => expect(packagePriceRappen(DrivePackage.extended90), 2900),
+    );
+    test(
       'Premium und Lieferung werden transparent addiert',
       () => expect(
         packagePriceRappen(DrivePackage.extended90, homeDelivery: true),
@@ -22,6 +26,19 @@ void main() {
         8900,
       ),
     );
+  });
+  group('Paketdauer', () {
+    test('Standard reserviert das maximale Zeitfenster von 90 Minuten', () {
+      expect(packageMinutes(DrivePackage.standard60), 90);
+    });
+
+    test('Extended reserviert 24 Stunden', () {
+      expect(packageMinutes(DrivePackage.extended90), 24 * 60);
+    });
+
+    test('Weekend bleibt bei 48 Stunden', () {
+      expect(packageMinutes(DrivePackage.weekend), 48 * 60);
+    });
   });
   group('Verfügbarkeit', () {
     final start = DateTime(2026, 10, 1, 9);
@@ -81,7 +98,7 @@ void main() {
     expect(
       isWithinCheckInWindow(
         booking,
-        now: start.add(const Duration(minutes: 61)),
+        now: start.add(const Duration(minutes: 91)),
       ),
       isFalse,
     );

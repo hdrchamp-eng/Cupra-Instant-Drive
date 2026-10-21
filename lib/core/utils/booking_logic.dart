@@ -27,8 +27,8 @@ bool bookingsOverlap(
 }
 
 int packageMinutes(DrivePackage value) => switch (value) {
-  DrivePackage.standard60 => 60,
-  DrivePackage.extended90 => 90,
+  DrivePackage.standard60 => 90,
+  DrivePackage.extended90 => 24 * 60,
   DrivePackage.weekend => 48 * 60,
 };
 

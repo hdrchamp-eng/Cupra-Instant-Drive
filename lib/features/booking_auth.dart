@@ -509,7 +509,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'STANDARD 60 MIN',
+                      'STANDARD 60–90 MIN',
                       style: TextStyle(
                         fontSize: 10,
                         color: AppColors.muted,
@@ -1006,8 +1006,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
 
   static String two(int v) => v.toString().padLeft(2, '0');
   static String packageLabel(DrivePackage p) => switch (p) {
-    DrivePackage.standard60 => '60 Minuten Standard',
-    DrivePackage.extended90 => '90 Minuten Extended',
+    DrivePackage.standard60 => '60–90 Minuten Standard',
+    DrivePackage.extended90 => '24 Stunden Extended',
     DrivePackage.weekend => 'Wochenende Premium',
   };
 }
@@ -1028,8 +1028,8 @@ class _PackageTile extends StatelessWidget {
     final price = packagePriceRappen(value, performance: performance);
     final title = BookingFlowScreenStateX.label(value);
     final sub = switch (value) {
-      DrivePackage.standard60 => 'Mo–Fr · zentraler Hub',
-      DrivePackage.extended90 => 'Mehr Zeit für deinen Alltag',
+      DrivePackage.standard60 => '60–90 Minuten · Mo–Fr · zentraler Hub',
+      DrivePackage.extended90 => '24 Stunden · Mo–Fr',
       DrivePackage.weekend => '48 Stunden · Premium-Demo',
     };
     return Card(
@@ -1063,8 +1063,8 @@ class _PackageTile extends StatelessWidget {
 
 extension BookingFlowScreenStateX on BookingFlowScreen {
   static String label(DrivePackage p) => switch (p) {
-    DrivePackage.standard60 => 'Standard 60',
-    DrivePackage.extended90 => 'Extended 90',
+    DrivePackage.standard60 => 'Standard 60–90',
+    DrivePackage.extended90 => 'Extended 24h',
     DrivePackage.weekend => 'Weekend',
   };
 }

@@ -1638,8 +1638,8 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   static String _packageName(DrivePackage value) => switch (value) {
-    DrivePackage.standard60 => '60 Minuten Standard',
-    DrivePackage.extended90 => '90 Minuten Extended',
+    DrivePackage.standard60 => '60–90 Minuten Standard',
+    DrivePackage.extended90 => '24 Stunden Extended',
     DrivePackage.weekend => 'Wochenende Premium',
   };
 
