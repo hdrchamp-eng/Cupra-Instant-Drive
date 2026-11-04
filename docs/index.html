@@ -1,126 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de-CH">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="/Cupra-Instant-Drive/">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="CUPRA Instant Drive ist ein fiktiver Schweizer Demo-MVP für digitale, autonome Probefahrten – ohne echte Zahlung, Dokumentprüfung oder Fahrzeugsteuerung.">
-  <meta name="theme-color" content="#07101F">
-  <meta name="color-scheme" content="dark">
-  <meta name="robots" content="index,follow">
-
-  <meta property="og:locale" content="de_CH">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="CUPRA Instant Drive · Fiktiver Demo-MVP">
-  <meta property="og:description" content="Fahrzeug finden, Demo-Verifizierung abschliessen, Probefahrt buchen und ein unverbindliches Angebot konfigurieren.">
-  <meta property="og:image" content="assets/assets/images/demo_hero.jpg">
-  <meta property="og:image:alt" content="Markenneutrales Demo-Fahrzeug an einem urbanen Schweizer Mobilitätshub">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CUPRA Instant Drive · Demo">
-  <meta name="twitter:description" content="Fiktiver Flutter-Prototyp für autonome Probefahrten in der Schweiz.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Instant Drive Demo">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>CUPRA Instant Drive · Demo</title>
-  <link rel="manifest" href="manifest.json">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#07101f">
+  <title>CUPRA Instant Drive · Archiviert</title>
   <style>
-    html, body {
-      width: 100%;
-      height: 100%;
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
       margin: 0;
-      overflow: hidden;
-      background: #07101f;
-    }
-    #app-loader {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
       display: grid;
       place-items: center;
-      background:
-        radial-gradient(circle at 50% 42%, rgba(196, 123, 87, .16), transparent 34%),
-        #07101f;
+      padding: 24px;
+      background: #07101f;
       color: #f7f2eb;
-      font: 700 12px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      width: min(620px, 100%);
+      padding: 42px;
+      border: 1px solid rgba(199, 127, 91, .38);
+      border-radius: 22px;
+      background: #0d1727;
+    }
+    .label {
+      margin: 0 0 14px;
+      color: #c77f5b;
+      font-size: 12px;
+      font-weight: 800;
       letter-spacing: .16em;
-      transition: opacity .24s ease;
+      text-transform: uppercase;
     }
-    #app-loader.is-ready {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .loader-content {
-      display: grid;
-      justify-items: center;
-      gap: 22px;
-    }
-    .loader-content img {
-      width: min(210px, 52vw);
-      height: auto;
-    }
-    .loader-track {
-      width: min(280px, 68vw);
-      height: 2px;
-      overflow: hidden;
-      background: rgba(247, 242, 235, .14);
-    }
-    .loader-track::after {
-      content: "";
-      display: block;
-      width: 46%;
-      height: 100%;
-      background: #c47b57;
-      animation: loader-move 1.05s ease-in-out infinite alternate;
-    }
-    @keyframes loader-move {
-      from { transform: translateX(-20%); }
-      to { transform: translateX(138%); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .loader-track::after { animation: none; width: 100%; }
-    }
+    h1 { margin: 0 0 18px; font-size: clamp(34px, 7vw, 58px); line-height: 1; }
+    p { margin: 0; color: #c6cbd4; font-size: 17px; line-height: 1.65; }
   </style>
 </head>
 <body>
-  <noscript>Diese interaktive Flutter-Demo benötigt JavaScript.</noscript>
-  <div id="app-loader" role="status" aria-live="polite">
-    <div class="loader-content">
-      <img src="assets/assets/branding/cupra-logo.svg?v=copper-1" alt="CUPRA">
-      <div class="loader-track" aria-hidden="true"></div>
-      <span>INSTANT DRIVE WIRD GELADEN</span>
-    </div>
-  </div>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
-  <script src="flutter_bootstrap.js" defer></script>
+  <main>
+    <p class="label">Projekt archiviert</p>
+    <h1>CUPRA Instant Drive</h1>
+    <p>Diese fiktive Demo wurde deaktiviert und wird derzeit nicht mehr öffentlich bereitgestellt.</p>
+  </main>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((items) => {
+        items.forEach((item) => item.unregister());
+      });
+    }
+    if ("caches" in window) {
+      caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+    }
+  </script>
 </body>
 </html>

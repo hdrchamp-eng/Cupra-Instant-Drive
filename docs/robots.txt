@@ -1,4 +1,2 @@
 User-agent: *
-Allow: /
-
-Sitemap: https://hdrchamp-eng.github.io/Cupra-Instant-Drive/sitemap.xml
+Disallow: /
